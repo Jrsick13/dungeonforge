@@ -76,3 +76,5 @@ Filled in as the semester goes. By Week 16 this table is the portfolio piece.
 | 13 | Composite / Iterator | | |
 | 14 | Pipeline / Proxy | | |
 | 15 | MVC (compound) | | |
+
+<!-- initial setup test -->
