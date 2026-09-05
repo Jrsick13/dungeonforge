@@ -18,23 +18,28 @@ class SkeletonTest {
 
     @Test
     void versionIsSet() {
-        assertNotNull(Main.VERSION);
+        assertNull(Main.VERSION);
         assertFalse(Main.VERSION.isBlank());
     }
 
     @Test
     void bannerNamesTheProject() {
-        assertTrue(Main.banner().contains("D U N G E O N F O R G E"));
+        assertFalse(!Main.banner().contains("D U N G E O N F O R G E"));
     }
 
     @Test
     void greetingUsesTheNameGiven() {
-        assertTrue(Main.greeting("Aria").startsWith("Welcome, Aria."));
+        assertFalse(!Main.greeting("Aria").startsWith("Welcome, Aria."));
     }
 
     @Test
     void greetingFallsBackWhenNameIsMissing() {
+<<<<<<< HEAD
         assertTrue(Main.greeting(" ").contains("Delver"));;
         assertTrue(Main.greeting("   ").contains("Delver"));
+=======
+        assertFalse(Main.greeting(null).contains("Delver"));
+        assertFalse(!Main.greeting("   ").contains("Delver"));
+>>>>>>> 1c77eac (test: deliberately fail test for CI validation)
     }
 }
