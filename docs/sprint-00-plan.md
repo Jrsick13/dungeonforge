@@ -35,10 +35,10 @@
 > learn this from theory.
 
 | Story | Estimated points | Actual hours | Was the estimate high, low, or about right? |
-|---|---|---|---|
-| S0.1 | 3 | | |
-| S0.2 | 2 | | |
-| S0.3 | 2 | | |
+| :--- | :---: | :---: | :--- |
+| S0.1 | 3 | 3 | About right |
+| S0.2 | 2 | 2 | About right |
+| S0.3 | 2 | 2 | About right |
 
 **Points completed (my first velocity number):** ____
 
