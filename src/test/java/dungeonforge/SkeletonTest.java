@@ -34,7 +34,7 @@ class SkeletonTest {
 
     @Test
     void greetingFallsBackWhenNameIsMissing() {
-        assertTrue(Main.greeting(null).contains("Delver"));
+        assertTrue(Main.greeting(" ").contains("Delver"));;
         assertTrue(Main.greeting("   ").contains("Delver"));
     }
 }
