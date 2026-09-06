@@ -28,21 +28,24 @@ what it claims to be.
 ### Flaw 1 — in `docs/backlog.md`
 
 **Which item:**
+"Implement Combat and Magic Systems"
 
 **What's wrong with it:**
+The story combines multiple large, complex features into a single card without clear boundaries or specific inputs/outputs.
 
 **Which INVEST letter(s) it violates, and how:**
+- **S (Small):** It is far too large and complex to be estimated accurately or completed within a single sprint iteration.
+- **T (Testable):** It lacks concrete, binary acceptance criteria, making it impossible to pass or fail objectively during testing.
 
 **My repaired version:**
-
-```
-As a ...,
-I want ...,
-so that ...
+```markdown
+As a player,
+I want to select a basic physical attack from the action menu during a turn,
+so that I can deal damage to an enemy target.
 
 Acceptance Criteria
-- Given ..., when ..., then ...
-- Given ..., when ..., then ...
+- Given a player's turn in combat, when the player selects "Attack" and target "Goblin", then the Goblin's health decreases by the player's attack stat value.
+- Given a target with equal or less health than the damage dealt, when the attack lands, then the target is marked as defeated and removed from the active turn queue.
 ```
 
 ---
@@ -50,20 +53,23 @@ Acceptance Criteria
 ### Flaw 2 — in `docs/definition-of-done.md`
 
 **Which checkbox:**
-
+[ ] Code is well-structured and easy to understand"]
 **Why it can't actually be checked:**
-
+It is completely subjective and opinion-based. Two developers can easily disagree on whether code is "well-structured" or "easy to understand," making it impossible to verify objectively.
 **My replacement, phrased so that it can be:**
-
+[ ] Code passes all automated linter rules with zero errors and has received at least one peer code review approval.
 ---
 
 ### Flaw 3 — in `docs/sprint-01-plan.md`
 
 **Which item:**
-
+"Epic 3: World Map Generation" or "Risk 1: Hope nothing breaks in production"
 **Why it isn't really what the document calls it:**
-
+It is listed as a single sprint story/task, but it is actually a massive multi-sprint Epic (or a passive wish listed as an actionable risk mitigation plan) without estimated point breakdown or actionable tasks.
 **My repaired version, including a mitigation someone could actually act on:**
+| Story / Task ID | Estimated Hours | Actionable Deliverable / Mitigation |
+| :--- | :---: | :--- |
+| S1.1-MapSetup | 3 | Implement a standard 10x10 tile grid generation class covered by unit tests.
 
 ---
 
