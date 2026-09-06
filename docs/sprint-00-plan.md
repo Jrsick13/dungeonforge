@@ -45,5 +45,15 @@
 ## Sprint Review — one sentence
 
 > What can the project do now that it could not do at the start of the week?
+The core Java 21 Maven project structure, automated GitHub Actions CI workflow, and initial Scrum board backlogs are now fully operational and validated.
 
+# Sprint 00 Retrospective
 
+### 1. What went well?
+- Successfully set up the project skeleton, GitHub Actions CI pipeline, and board issues.
+
+### 2. What could be improved?
+- Branch synchronization issues between feature branches and main caused git push rejections.
+
+### 3. One specific thing to do differently next sprint:
+- Switch to main and pull latest remote changes before creating new feature branches.
