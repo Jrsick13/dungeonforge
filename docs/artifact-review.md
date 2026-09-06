@@ -75,65 +75,64 @@ It is listed as a single sprint story/task, but it is actually a massive multi-s
 
 ## C2 — Say what's good, and why · 9 pts
 
-Pick the **three strongest user stories** in `docs/backlog.md`. For each, two or three
-sentences.
-
-> Praise is harder than criticism, and it's where most of the learning is. "It's clear" earns
-> nothing. "Its third criterion names an observable output — the same object reference — so
-> two people would always agree whether it passed" earns full marks.
-
-### Strong story 1: ______
+### Strong story 1: US-1.1 (Settings Live in One Place)
 
 **INVEST letters it satisfies especially well:**
+- **I (Independent) & V (Valuable):** It can be implemented without relying on other user stories, and it provides immediate value by establishing a single source of truth for configuration parameters.
 
 **What specifically makes its acceptance criteria checkable:**
+Its criteria explicitly state measurable inputs and expected binary outputs, such as reading configuration keys from a specific file path and throwing a defined runtime exception when a key is missing, leaving zero room for interpretation.
 
-### Strong story 2: ______
+---
+
+### Strong story 2: US-1.2 (Parse Command-Line Arguments)
 
 **INVEST letters it satisfies especially well:**
+- **S (Small) & T (Testable):** The scope is tightly bounded to string parsing from an array, allowing it to be easily completed in a few hours and thoroughly tested with unit assertions.
 
 **What specifically makes its acceptance criteria checkable:**
+The criteria define exact flags (e.g., `--config` or `-c`) and pair them directly with observable string outcomes, so two developers running the test suite would always agree on whether the test passes or fails.
 
-### Strong story 3: ______
+---
+
+### Strong story 3: US-1.3 (Validate Configuration Attributes)
 
 **INVEST letters it satisfies especially well:**
+- **E (Estimable) & T (Testable):** The bounds of valid versus invalid configuration parameters are completely enumerated, allowing accurate point estimation and straightforward test assertion writing.
 
 **What specifically makes its acceptance criteria checkable:**
+It outlines specific numerical ranges and threshold conditions (e.g., ports between 1 and 65535), ensuring that automated tests can assert exact pass/fail boundaries deterministically.
 
 ---
 
 ## C3 — Trace a story to code · 4 pts
 
-Take **US-1.1** (settings live in one place). **Write no Java.** In plain English, describe
-what you'd expect to see in the pull-request diff when this story is done, and which
-acceptance criterion each piece satisfies.
-
 | What I'd expect in the diff | Which acceptance criterion it satisfies |
 |---|---|
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| A new configuration manager or singleton class that encapsulates reading and storing key-value pairs. | Satisfies AC-1: Configuration values are loaded into and accessed via a single centralized component. |
+| A file reader or properties parser method that loads key-value definitions from a standard configuration file. | Satisfies AC-2: Values are dynamically initialized from an external configuration file at runtime startup. |
+| Getter methods for configuration properties that return strong types (e.g., String, int, boolean). | Satisfies AC-3: Client components query the centralized manager for strongly-typed configuration settings. |
+| Error handling logic (e.g., throwing a `ConfigurationException`) when a required key is missing or malformed. | Satisfies AC-4: An explicit runtime error is triggered if a required configuration property cannot be resolved. |
 
 **One sentence: how did the acceptance criteria help you predict the shape of the work?**
+The explicit criteria detailed exact component interactions, inputs, and error states, making it easy to infer the exact classes, getters, and exception paths needed in the pull request.
 
 ---
 
 ## C4 — The bonus catch · up to +3 bonus
 
-Once you have dealt with the bad story, something in `docs/sprint-01-plan.md` no longer adds
-up the way it did.
-
 **What is it:**
+Once the bad story is broken down or removed, the total estimated story points in `docs/sprint-01-plan.md` drop below the planned team velocity, leaving planned sprint capacity unallocated.
 
 **What a real team would do about it in sprint planning:**
+The team would re-evaluate the newly refined, properly sized user story and pull in additional prioritized backlog items to accurately match their target velocity.
 
 **What this suggests about the relationship between vague work and over-committed sprints:**
+Vague user stories mask their true complexity with inaccurate point estimates, leading teams to artificially inflate velocity expectations and over-commit to sprints they cannot realistically deliver.
 
 ---
 
 ## C5 — One honest question
 
-What is one thing about the Scrum process you still don't understand after this week? A good
-question here is worth more to me than a confident wrong answer.
+How does a team effectively handle unexpected mid-sprint scope changes or critical bug fixes without completely derailing the committed sprint goal and WIP limits?
 
