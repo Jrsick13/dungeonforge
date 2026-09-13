@@ -1,0 +1,9 @@
+{
+  "playerStartingHp": 200,
+  "playerStartingAtk": 8,
+  "playerStartingDef": 2,
+  "playerCarryCapacity": 60,
+  "dungeonDepth": 3,
+  "roomsPerLevel": 8,
+  "maxMonstersPerRoom": 2
+}
