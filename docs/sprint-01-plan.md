@@ -62,14 +62,16 @@ remembering the next time your own sprint doesn't fit.
 
 | Story | Estimated | Actual hours | High, low, or about right? |
 |---|---|---|---|
-| US-1.1 | 3 | | |
-| US-1.2 | 3 | | |
-| US-1.3 | 2 | | |
+| US-1.1 | 3 | 2.5 | About right |
+| US-1.2 | 3 | 2.0 | About right |
+| US-1.3 | 2 | 1.5 | About right |
 
-**Points completed:** ____ · **Sprint 0 velocity for comparison:** ____
+**Points completed:** 8 · **Sprint 0 velocity for comparison:** 8
 
 ## Sprint Review — one sentence
 
 > What can the project do now that it could not do last week?
+
+> The project can now generate deterministic, reproducible dungeon runs via a centralized seeded random source and enforce strict Singleton encapsulation backed by automated JUnit 5 tests.-
 
 
