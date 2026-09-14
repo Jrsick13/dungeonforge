@@ -1,0 +1,132 @@
+classDiagram
+    direction BT
+
+    class GameConfig {
+        - static GameConfig instance
+        - Map~String, Object~ settings
+        - GameConfig()
+        + static GameConfig getInstance()
+        + int getInt(String key, int defaultValue)
+        + long getLong(String key, long defaultValue)
+        + static void resetForTests()
+    }
+
+    class Json {
+        - String s
+        - int i
+        - Json(String s)
+        + static Map~String, Object~ parseObject(String text)
+        - void ws()
+        - Object value()
+        - Map~String, Object~ object()
+        - List~Object~ array()
+        - String string()
+        - Double number()
+    }
+
+    class RandomSource {
+        - static RandomSource instance
+        - Random random
+        - RandomSource()
+        + static RandomSource getInstance()
+        + void reseed(long seed)
+        + int nextInt(int bound)
+        + static void resetForTests()
+    }
+
+    class Entity {
+        # String name
+        # int hp
+        # int maxHp
+        # int attackPower
+        # int defense
+        # Entity(String name, int maxHp, int attackPower, int defense)
+        + String getName()
+        + int getHp()
+        + int getMaxHp()
+        + int getAttackPower()
+        + int getDefense()
+        + boolean isAlive()
+        + void takeDamage(int amount)
+        + void heal(int amount)
+        + abstract String describe()
+        + String toString()
+    }
+
+    class Player {
+        - int gold
+        - int xp
+        + Player(String name)
+        + int getGold()
+        + int getXp()
+        + void addGold(int g)
+        + void addXp(int x)
+        + double carryCapacity()
+        + String describe()
+    }
+
+    class Monster {
+        - String species
+        - int xpReward
+        + Monster(String species, int baseHp, int baseAttack, int xpReward)
+        + String getSpecies()
+        + int getXpReward()
+        + String describe()
+    }
+
+    class Room {
+        - static String[] FLAVORS
+        - String id
+        - String flavor
+        - List~Monster~ monsters
+        + Room(String id)
+        + String getId()
+        + String getFlavor()
+        + List~Monster~ getMonsters()
+        + void addMonster(Monster m)
+    }
+
+    class DungeonLevel {
+        - int depth
+        - List~Room~ rooms
+        + DungeonLevel(int depth)
+        + int getDepth()
+        + List~Room~ getRooms()
+        + void addRoom(Room r)
+    }
+
+    class GameWorld {
+        - Player player
+        - List~DungeonLevel~ levels
+        + GameWorld(Player player)
+        - void generate()
+        - Monster spawn(int depth)
+        + Player getPlayer()
+        + List~DungeonLevel~ getLevels()
+        + int totalMonsters()
+    }
+
+    class Main {
+        + static String VERSION
+        - Main()
+        + static String banner()
+        + static void main(String[] args)
+    }
+
+    Entity <|-- Player : extends
+    Entity <|-- Monster : extends
+    GameWorld --> Player : manages
+    GameWorld --> DungeonLevel : contains
+    DungeonLevel --> Room : contains
+    Room --> Monster : contains
+    Player ..> GameConfig : reads config
+    Monster ..> RandomSource : rolls stats
+    Room ..> RandomSource : rolls flavor
+    GameWorld ..> GameConfig : reads settings
+    GameWorld ..> RandomSource : rolls counts/spawn
+    RandomSource ..> GameConfig : reads default seed
+    GameConfig ..> Json : parses config.json
+    Main --> GameConfig : initializes
+    Main --> RandomSource : reseeds
+    Main --> Player : instantiates
+    Main --> GameWorld : builds world
