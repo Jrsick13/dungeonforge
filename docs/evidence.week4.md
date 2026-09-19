@@ -9,15 +9,15 @@ mvn -q exec:java > before.txt
 grep -rn "new Monster(" src/main/java
 ```
 
-**How many places construct a Monster?** ____   **Which class?** ____
+**How many places construct a Monster?** 1   **Which class?** GameWorld.java
 
 **Look at `before.txt`. List the species that appear on level 1, and on level 3:**
 
-- Level 1: 
-- Level 3: 
+- Level 1: Skeleton, Bone Priest, Wight, Crypt Rat 
+- Level 3: Skeleton, Bone Priest, Wight, Crypt Rat
 
 **In one sentence: what is the player's experience of descending from level 1 to level 3?**
-
+The experience doesn't change. It's the same monsters and level. Only Attack numbers change.
 
 **Open `Room.java`. Whose prose is in the `FLAVORS` array — and what would a forge level
 sound like today?**
