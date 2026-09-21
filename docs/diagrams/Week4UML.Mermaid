@@ -1,0 +1,255 @@
+classDiagram
+    direction TB
+
+%% Styling blocks to make design patterns clear and separate
+    class GameConfig {
+        <<Singleton>>
+        -static GameConfig instance
+        -Map~String, Object~ settings
+        -GameConfig()
+        +static GameConfig getInstance()
+        +int getInt(String, int)
+        +long getLong(String, long)
+        +static String readResource(String)
+        +static void resetForTests()
+    }
+
+    class RandomSource {
+        <<Singleton>>
+        -static RandomSource instance
+        -Random random
+        -RandomSource()
+        +static RandomSource getInstance()
+        +void reseed(long)
+        +int nextInt(int)
+        +long getSeed()
+        +static void resetForTests()
+    }
+
+    class MonsterFactory {
+<<Simple Factory>>
+-Map~String, MonsterDef~ blueprints
++MonsterFactory()
+-void loadFrom(String)
++void register(String, MonsterDef)
++Monster create(String, int)
++List~String~ idsForTheme(String)
++String bossIdForTheme(String)
+}
+
+class MonsterDef {
+-String id
+-String name
+-int hp
+-int attack
+-int xp
+-String theme
+-boolean boss
++MonsterDef(String, String, int, int, int, String)
++MonsterDef(String, String, int, int, int, String, boolean)
++String getId()
++String getName()
++int getHp()
++int getAttack()
++int getXp()
++String getTheme()
++boolean isBoss()
++String toString()
+    }
+
+class Entity {
+<<abstract>>
+#String name
+#int hp
+#int maxHp
+#int attackPower
+#int defense
+#Entity(String, int, int, int)
++String getName()
++int getHp()
++int getMaxHp()
++int getAttackPower()
++int getDefense()
++boolean isAlive()
++void takeDamage(int)
++void heal(int)
++String describe()*
++String toString()
+}
+
+class Player {
+-int gold
+-int xp
++Player(String)
++int getGold()
++int getXp()
++void addGold(int)
++void addXp(int)
++double carryCapacity()
++String describe()
+}
+
+class Monster {
+-String species
+-int xpReward
++Monster(String, int, int, int)
++String getSpecies()
++int getXpReward()
++String describe()
+}
+
+class Item {
+<<interface>>
++String getName()
++double getWeight()
++int getValue()
++String describe()
+}
+
+class Weapon {
+-String name
+-double weight
+-int value
+-int damage
++Weapon(String, double, int, int)
++String getName()
++double getWeight()
++int getValue()
++int getDamage()
++String describe()
+}
+
+class Armor {
+-String name
+-double weight
+-int value
+-int defense
++Armor(String, double, int, int)
++String getName()
++double getWeight()
++int getValue()
++int getDefense()
++String describe()
+}
+
+class Potion {
+-String name
+-double weight
+-int value
+-int healAmount
++Potion(String, double, int, int)
++String getName()
++double getWeight()
++int getValue()
++int getHealAmount()
++String describe()
+}
+
+class Treasure {
+-String name
+-double weight
+-int value
++Treasure(String, double, int)
++String getName()
++double getWeight()
++int getValue()
+    }
+
+class Chest {
+-String name
+-List~Item~ contents
++Chest(String)
++String getName()
++List~Item~ getContents()
++void add(Item)
++boolean isEmpty()
++int totalValue()
+}
+
+class Room {
+-String id
+-String flavor
+-List~Monster~ monsters
+-List~Item~ floorItems
+-Chest chest
++Room(String)
++String getId()
++String getFlavor()
++void setFlavor(String)
++List~Monster~ getMonsters()
++void addMonster(Monster)
++List~Item~ getFloorItems()
++void addItem(Item)
++Chest getChest()
++void setChest(Chest)
++boolean hasChest()
+}
+
+class DungeonLevel {
+-int depth
+-List~Room~ rooms
++DungeonLevel(int)
++int getDepth()
++List~Room~ getRooms()
++void addRoom(Room)
+}
+
+class GameWorld {
+-Player player
+-List~DungeonLevel~ levels
+-MonsterFactory monsterFactory
++GameWorld(Player)
+-void generate()
+-Monster spawn(int)
++Player getPlayer()
++List~DungeonLevel~ getLevels()
++int totalMonsters()
+}
+
+class Main {
++String VERSION
+-Main()
++static String banner()
++static void main(String[])
+}
+
+class Json {
+-String s
+-int i
+-Json(String)
++static Map~String, Object~ parseObject(String)
+-void ws()
+-Object value()
+-Map~String, Object~ object()
+-List~Object~ array()
+-String string()
+-Double number()
+}
+
+%% Relationships and Inheritances
+Entity <|-- Player
+Entity <|-- Monster
+Item <|.. Weapon
+Item <|.. Armor
+Item <|.. Potion
+Item <|.. Treasure
+
+MonsterFactory --> MonsterDef : manages / loads
+MonsterFactory --> Monster : creates
+GameWorld --> MonsterFactory : uses (Simple Factory)
+GameWorld --> DungeonLevel : contains
+DungeonLevel --> Room : contains
+Room --> Monster : contains
+Room --> Item : floor items
+Room --> Chest : contains
+Chest --> Item : contains contents
+Main --> GameWorld : instantiates
+Main --> Player : instantiates
+GameConfig --> Json : parses configs via
+MonsterFactory --> Json : parses blueprints via
+GameConfig --> RandomSource : provides seed to
+Monster --> RandomSource : uses variance from
+Room --> RandomSource : picks flavor from
+GameWorld --> RandomSource : calculates counts from
+Main --> RandomSource : reseeds
+Main --> GameConfig : reads settings from
