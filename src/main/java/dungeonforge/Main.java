@@ -35,7 +35,7 @@ public final class Main {
         System.out.println(banner());
         System.out.println("  version " + VERSION);
         System.out.println("  seed " + RandomSource.getInstance().getSeed()
-                + "  |  depth " + GameConfig.getInstance().getInt("dungeonDepth"));
+                + "  |  depth " + GameConfig.getInstance().getInt("dungeonDepth", 3));
         System.out.println();
 
         ArgumentParser parser = ArgumentParsers.newFor("Main").build()
