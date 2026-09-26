@@ -1,9 +1,15 @@
 {
-  "playerStartingHp": 200,
-  "playerStartingAtk": 8,
-  "playerStartingDef": 2,
-  "playerCarryCapacity": 60,
-  "dungeonDepth": 3,
+  "playerStartingHp": 80,
+  "playerStartingAttack": 10,
+  "playerStartingDefense": 3,
+  "carryCapacity": 60,
+
+  "dungeonDepth": 4,
   "roomsPerLevel": 8,
-  "maxMonstersPerRoom": 2
+  "maxMonstersPerRoom": 2,
+
+  "restHealPerRoom": 8,
+  "fleeThreshold": 0.30,
+
+  "seed": 20260829
 }

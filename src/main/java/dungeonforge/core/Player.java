@@ -4,9 +4,8 @@ import dungeonforge.config.GameConfig;
 
 /**
  * WEEK 1 -- the player.
- *
- * Refactored (US-1.1): Tunable values are pulled dynamically from GameConfig
- * instead of being hardcoded literals.
+ * WEEK 3 (US-1.1) -- every tunable number now comes from GameConfig. There is not one
+ * numeric literal left in this class, which is what acceptance criterion 2 demanded.
  */
 public class Player extends Entity {
 
@@ -14,13 +13,10 @@ public class Player extends Entity {
     private int xp;
 
     public Player(String name) {
-        // Read starting HP, attack, and defense dynamically from GameConfig
-        super(
-                name,
-                GameConfig.getInstance().getInt("playerStartingHp", 60),
-                GameConfig.getInstance().getInt("playerStartingAtk", 8),
-                GameConfig.getInstance().getInt("playerStartingDef", 2)
-        );
+        super(name,
+              GameConfig.getInstance().getInt("playerStartingHp"),
+              GameConfig.getInstance().getInt("playerStartingAttack"),
+              GameConfig.getInstance().getInt("playerStartingDefense"));
     }
 
     public int getGold()          { return gold; }
@@ -28,9 +24,9 @@ public class Player extends Entity {
     public void addGold(int g)    { gold += g; }
     public void addXp(int x)      { xp += x; }
 
-    /** Backpack capacity in kilograms pulled from GameConfig. */
+    /** Backpack capacity in kilograms, from config. */
     public double carryCapacity() {
-        return GameConfig.getInstance().getInt("playerCarryCapacity", 60);
+        return GameConfig.getInstance().getDouble("carryCapacity");
     }
 
     @Override

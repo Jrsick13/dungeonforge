@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * WEEK 4 -- a container of loot, placed by a TreasureRoomPopulator.java or BossRoomPopulator.java.
+ * WEEK 4 -- a container of loot, placed by a TreasureRoomPopulator or BossRoomPopulator.
  *
  * Note it is NOT an Item. In Week 13 it becomes part of a COMPOSITE and that changes, but
  * building for that now would be guessing at a design you have not been taught yet.
