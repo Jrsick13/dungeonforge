@@ -18,25 +18,25 @@ Suppose behaviour is expressed by subclassing `Monster` — `AggressiveSkeleton`
 `SkittishSkeleton`, `RangedImp`, and so on.
 
 | Question | Your answer |
-|---|---|
-| How many classes for 15 species × 4 behaviours? | |
-| Add a 5th behaviour (say, "berserk"). How many NEW classes? | |
-| Add a 16th species. How many NEW classes? | |
-| A skeleton is losing badly and should start running. **Can a `SkittishSkeleton` object become an `AggressiveSkeleton` object at runtime?** Answer yes or no and say why. | |
+|---|-------------|
+| How many classes for 15 species × 4 behaviours? | 60          |
+| Add a 5th behaviour (say, "berserk"). How many NEW classes? | 15          |
+| Add a 16th species. How many NEW classes? | 4           |
+| A skeleton is losing badly and should start running. **Can a `SkittishSkeleton` object become an `AggressiveSkeleton` object at runtime?** Answer yes or no and say why. | No          |
 
 ### The composition approach
 
 | Question | Your answer |
-|---|---|
-| How many classes for 15 species + 4 strategies? | |
-| Add a 5th behaviour. How many NEW classes? | |
-| Add a 16th species. How many NEW **Java** files? | |
-| Can a monster change behaviour at runtime? How? | |
+|---|-------------|
+| How many classes for 15 species + 4 strategies? | 19          |
+| Add a 5th behaviour. How many NEW classes? | 1           |
+| Add a 16th species. How many NEW **Java** files? | 1           |
+| Can a monster change behaviour at runtime? How? | Yes         |
 
 **Now write two or three sentences.** Head First calls this the SimUDuck problem. In your own
 words: **what is the actual defect in the subclassing design?** Not "it's more classes" —
 there's a deeper problem that the last row of each table points at.
-
+The core defect of the subclassing design is that behavior is rigidly locked into a fixed inheritance hierarchy, forcing subclasses to either inherit inappropriate methods or duplicate code. This makes it impossible to cleanly share, reuse, or dynamically alter behaviors across different types without breaking encapsulation and creating a fragile, hard-to-maintain codebase when requirements change.
 
 ## D2 — The coupling experiment · 9 pts
 
