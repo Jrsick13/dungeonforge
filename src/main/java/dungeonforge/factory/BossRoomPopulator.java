@@ -1,8 +1,7 @@
 package dungeonforge.factory;
 
 import dungeonforge.core.Monster;
-import dungeonforge.items.Chest;
-
+import dungeonforge.items.Chest; // Make sure this matches your project's chest import
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,16 +12,21 @@ public class BossRoomPopulator extends RoomPopulator {
     }
 
     @Override
+    public String kind() {
+        return "boss";
+    }
+
+    @Override
     protected List<Monster> createEncounter(int depth) {
         List<Monster> encounter = new ArrayList<>();
 
         // Add the boss
         MonsterDef bossDef = theme.createBoss(depth);
-        encounter.add(new Monster(bossDef));
+        encounter.add(theme.getMonsterFactory().create(bossDef.getId(), depth));
 
         // Add an escort/minion
         MonsterDef escortDef = theme.createMonster(depth);
-        encounter.add(new Monster(escortDef));
+        encounter.add(theme.getMonsterFactory().create(escortDef.getId(), depth));
 
         return encounter;
     }

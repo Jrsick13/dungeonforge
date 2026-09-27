@@ -45,7 +45,7 @@ public class GameWorld {
 
         for (int d = 1; d <= dungeonDepth; d++) {
             ThemeKit theme = themes.forDepth(d);              // ABSTRACT FACTORY
-            DungeonLevel level = new DungeonLevel(d, theme.themeName());
+            DungeonLevel level = new DungeonLevel(d, theme);
 
             for (int r = 0; r < roomsPerLevel; r++) {
                 Room room = new Room("L" + d + "R" + r);

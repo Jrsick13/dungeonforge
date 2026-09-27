@@ -3,20 +3,30 @@ package dungeonforge.factory;
 import dungeonforge.items.Item;
 
 public class VolcanicThemeKit implements ThemeKit {
+    private final MonsterFactory monsterFactory;
+
+    public VolcanicThemeKit(MonsterFactory monsterFactory) {
+        this.monsterFactory = monsterFactory;
+    }
+
+    @Override
+    public MonsterFactory getMonsterFactory() {
+        return monsterFactory;
+    }
 
     @Override
     public String themeName() {
-        return "Volcanic Depths";
+        return "Volcanic";
     }
 
     @Override
     public MonsterDef createMonster(int depth) {
-        return new MonsterDef("volcanic_minion", "Magma Imp", 25 + (depth * 2), 8, 12, "Volcanic", false);
+        return new MonsterDef("volcanic_minion", "Magma Crawler", 30, 8, 18, "Volcanic", false);
     }
 
     @Override
     public MonsterDef createBoss(int depth) {
-        return new MonsterDef("volcanic_boss", "Molten Drake", 70 + (depth * 5), 18, 35, "Volcanic", true);
+        return new MonsterDef("volcanic_boss", "Magma Tyrant", 70, 16, 45, "Volcanic", true);
     }
 
     @Override
@@ -26,6 +36,6 @@ public class VolcanicThemeKit implements ThemeKit {
 
     @Override
     public String createRoomFlavor() {
-        return "Rivers of bubbling lava cast a dim, fiery orange glow across the scorched stone walls.";
+        return "The ground trembles with the heartbeat of an underground inferno.";
     }
 }

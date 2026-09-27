@@ -20,7 +20,7 @@ public final class ThemeRegistry {
         kits.add(new CryptThemeKit(factory));
         kits.add(new ForgeThemeKit(factory));
         kits.add(new FrostThemeKit(factory));
-        kits.add(new WinterfellThemeKit(factory));
+        kits.add(new VolcanicThemeKit(factory));
     }
 
     /** Levels cycle through the registered themes. */

@@ -73,7 +73,7 @@ public final class Main {
             System.out.println();
 
             for (DungeonLevel level : world.getLevels()) {
-                System.out.println("-- Level " + level.getDepth() + ": " + level.getThemeName() + " --");
+                System.out.println("-- Level " + level.getDepth() + ": " + level.getThemeKit().themeName() + " --");
                 for (Room room : level.getRooms()) {
                     StringBuilder line = new StringBuilder("  " + room.getId() + ": ");
                     if (room.getMonsters().isEmpty()) {
@@ -112,7 +112,7 @@ public final class Main {
         Combat combat = new Combat();
         for (DungeonLevel level : world.getLevels()) {
             System.out.println("  Descending to level " + level.getDepth()
-                    + " (" + level.getThemeName() + ")");
+                    + " (" + level.getThemeKit().themeName() + ")");
             for (Room room : level.getRooms()) {
                 if (!room.getMonsters().isEmpty()) {
                     System.out.println("    " + room.getId());

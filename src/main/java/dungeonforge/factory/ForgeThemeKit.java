@@ -3,6 +3,17 @@ package dungeonforge.factory;
 import dungeonforge.items.Item;
 
 public class ForgeThemeKit implements ThemeKit {
+    private final MonsterFactory monsterFactory;
+
+    public ForgeThemeKit(MonsterFactory monsterFactory) {
+        this.monsterFactory = monsterFactory;
+    }
+
+    @Override
+    public MonsterFactory getMonsterFactory() {
+        return monsterFactory;
+    }
+
     @Override
     public String themeName() {
         return "Forge";

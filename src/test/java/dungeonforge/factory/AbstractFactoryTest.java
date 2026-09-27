@@ -7,20 +7,24 @@ public class AbstractFactoryTest {
 
     @Test
     public void testThemeRegistryMapping() {
-        // Verify depth maps to the correct theme name
-        ThemeKit level1Kit = ThemeRegistry.getKitForLevel(1);
+        MonsterFactory factory = new MonsterFactory();
+        ThemeRegistry registry = new ThemeRegistry(factory);
+
+        // Verify depth maps to the correct theme name using forDepth
+        ThemeKit level1Kit = registry.forDepth(1);
         assertEquals("Crypt", level1Kit.themeName());
 
-        ThemeKit level2Kit = ThemeRegistry.getKitForLevel(2);
+        ThemeKit level2Kit = registry.forDepth(2);
         assertEquals("Forge", level2Kit.themeName());
 
-        ThemeKit level3Kit = ThemeRegistry.getKitForLevel(3);
+        ThemeKit level3Kit = registry.forDepth(3);
         assertEquals("Frost", level3Kit.themeName());
     }
 
     @Test
     public void testCryptThemeKitIntegrity() {
-        ThemeKit kit = new CryptThemeKit();
+        MonsterFactory factory = new MonsterFactory();
+        ThemeKit kit = new CryptThemeKit(factory);
         assertEquals("Crypt", kit.themeName());
         assertNotNull(kit.createRoomFlavor());
 
@@ -37,7 +41,8 @@ public class AbstractFactoryTest {
 
     @Test
     public void testForgeThemeKitIntegrity() {
-        ThemeKit kit = new ForgeThemeKit();
+        MonsterFactory factory = new MonsterFactory();
+        ThemeKit kit = new ForgeThemeKit(factory);
         assertEquals("Forge", kit.themeName());
         assertNotNull(kit.createRoomFlavor());
 
@@ -54,7 +59,8 @@ public class AbstractFactoryTest {
 
     @Test
     public void testFrostThemeKitIntegrity() {
-        ThemeKit kit = new FrostThemeKit();
+        MonsterFactory factory = new MonsterFactory();
+        ThemeKit kit = new FrostThemeKit(factory);
         assertEquals("Frost", kit.themeName());
         assertNotNull(kit.createRoomFlavor());
 

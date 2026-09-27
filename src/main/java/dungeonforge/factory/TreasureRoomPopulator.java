@@ -13,14 +13,18 @@ import java.util.List;
  */
 public class TreasureRoomPopulator extends RoomPopulator {
 
-    public TreasureRoomPopulator(ThemeKit theme) { super(theme); }
+    public TreasureRoomPopulator(ThemeKit theme) {
+        super(theme);
+    }
 
     @Override public String kind() { return "treasure"; }
 
     @Override
     protected List<Monster> createEncounter(int depth) {
         List<Monster> out = new ArrayList<>();
-        out.add(theme.createMonster(depth));
+        MonsterDef def = theme.createMonster(depth);
+        // Pass the monster's ID string and the depth into the factory!
+        out.add(theme.getMonsterFactory().create(def.getId(), depth));
         return out;
     }
 

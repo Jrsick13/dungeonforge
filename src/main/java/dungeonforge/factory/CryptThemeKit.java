@@ -3,6 +3,12 @@ package dungeonforge.factory;
 import dungeonforge.items.Item;
 
 public class CryptThemeKit implements ThemeKit {
+    private final MonsterFactory monsterFactory;
+
+    public CryptThemeKit(MonsterFactory monsterFactory) {
+        this.monsterFactory = monsterFactory;
+    }
+
     @Override
     public String themeName() {
         return "Crypt";
@@ -26,5 +32,10 @@ public class CryptThemeKit implements ThemeKit {
     @Override
     public String createRoomFlavor() {
         return "The air is cold and smells of ancient dust and decay.";
+    }
+
+    @Override
+    public MonsterFactory getMonsterFactory() {
+        return monsterFactory;
     }
 }

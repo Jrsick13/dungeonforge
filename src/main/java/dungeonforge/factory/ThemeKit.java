@@ -1,6 +1,6 @@
 package dungeonforge.factory;
 
-import dungeonforge.core.Monster;
+import dungeonforge.core.Monster; // You can keep or remove this if unused
 import dungeonforge.items.Item;
 
 /**
@@ -17,19 +17,22 @@ import dungeonforge.items.Item;
  * and ONE registry line. GameWorld does not change. Neither does RoomPopulator. That is the
  * Open/Closed Principle stated as a number instead of a slogan.
  */
+
 public interface ThemeKit {
 
     String themeName();
 
     /** An ordinary inhabitant of this kind of place. */
-    Monster createMonster(int depth);
+    MonsterDef createMonster(int depth);
 
     /** The thing at the bottom of this kind of place. */
-    Monster createBoss(int depth);
+    MonsterDef createBoss(int depth);
 
     /** Loot that belongs in this kind of place. */
     Item createLoot(int depth);
 
     /** Prose that sounds like this kind of place. */
     String createRoomFlavor();
+
+    MonsterFactory getMonsterFactory();
 }
