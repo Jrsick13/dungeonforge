@@ -1,5 +1,7 @@
 package dungeonforge.core;
 
+import dungeonforge.behavior.Action;
+import dungeonforge.behavior.SkittishStrategy;
 import dungeonforge.config.GameConfig;
 
 import java.util.ArrayList;
@@ -28,34 +30,60 @@ public class Combat {
 
     /** Returns true if the player survived the encounter. */
     public boolean fight(Player player, Room room, int depth) {
-        if (room.getMonsters().isEmpty()) return true;
+        if (!hasLiving(room)) return true;
 
         System.out.println("    ! " + room.getMonsters().size() + " hostile(s)");
 
         int round = 0;
         while (player.isAlive() && hasLiving(room) && round++ < MAX_ROUNDS) {
-
-            // --- player's turn: hit the first thing still standing ---
-            Monster target = firstLiving(room);
-            if (target != null) {
-                int damage = player.getAttackPower();
-                target.takeDamage(damage);
-                System.out.println("      you hit " + target.getName() + " for " + damage);
-                if (!target.isAlive()) {
-                    System.out.println("      " + target.getName() + " dies");
-                    player.addXp(target.getXpReward());
-                    player.addGold(target.getXpReward() * 2);
-                }
-            }
+            playerActs(player, room);
+            if (!hasLiving(room)) break;
 
             // --- monsters' turn ---
             for (Monster m : livingMonsters(room)) {
-                monsterActs(m, player);
+                checkForTacticsChange(m);
+                monsterActs(m, player, room);
+                if(!player.isAlive()) break;
             }
         }
-        return player.isAlive();
+
+        if (!player.isAlive()) {
+            // TODO: publish with observer event
+            System.out.println("Game Over - Player Died");
+            return false;
+        }
+        // TODO: publish with observer event
+        System.out.println("Player survived - Room Cleared");
+        return true;
     }
 
+    private void playerActs(Player player, Room room) {
+        // --- player's turn: hit the first thing still standing ---
+        Monster target = firstLiving(room);
+        if ( target == null) return;
+
+        int damage = player.getAttackPower();
+        target.takeDamage(damage);
+        // TODO: publish with observer event
+        System.out.println("      you hit " + target.getName() + " for " + damage);
+        if (!target.isAlive()) {
+            player.addXp(target.getXpReward());
+            player.addGold(target.getXpReward() * 2);
+            // TODO: publish with observer event
+            System.out.println("      " + target.getName() + " dies");
+        }
+    }
+
+    private void checkForTacticsChange(Monster m) {
+        double threshold = GameConfig.getInstance().getDouble("fleeThreshold");
+        if (m.hpFraction() >= threshold) return;
+        if (m.getStrategy() instanceof SkittishStrategy) return;
+
+        String from = m.getStrategy().name();
+        m.setStrategy(new SkittishStrategy());
+        // TODO: publish this event once Observer Pattern set.
+        System.out.println(m.getName() + " changed strategy from " + from + " to " + m.getStrategy().name());
+    }
     /**
      * TODO(week 5, US-3.1 and US-3.2): THIS METHOD IS THE WHOLE PROBLEM.
      *
@@ -64,10 +92,30 @@ public class Combat {
      *  - a monster cannot CHANGE tactics when it is badly wounded, because the behaviour
      *    is not a thing that can be swapped -- it is code baked into the encounter loop
      */
-    private void monsterActs(Monster m, Player player) {
-        int damage = m.getAttackPower();
-        player.takeDamage(damage);
-        System.out.println("      " + m.getName() + " hits you for " + damage);
+    private void monsterActs(Monster m, Player player, Room room) {
+        if(m.getStrategy() == null) return;
+        Action action = m.getStrategy().chooseAction(m, player, room);
+        if( action == null ) return;
+
+        switch (action.getType()) {
+            case ATTACK -> {
+                int dmg = m.getAttackPower();
+                player.takeDamage(dmg);
+            }
+            case RANGED_ATTACK -> {
+                int dmg = Math.max(1, (int)Math.round(m.getAttackPower() * 0.8));
+                player.takeDamage(dmg);
+            }
+            case FLEE -> {
+                room.getMonsters().remove(m);
+            }
+            case HEAL_ALLY -> {
+                if(action.getTarget() != null) {
+                    action.getTarget().heal(5);
+                }
+            }
+            case WAIT -> { }
+        }
     }
 
     private boolean hasLiving(Room room) { return firstLiving(room) != null; }

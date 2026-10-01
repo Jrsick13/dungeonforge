@@ -1,5 +1,7 @@
 package dungeonforge.factory;
 
+import dungeonforge.behavior.CombatStrategy;
+
 /**
  * WEEK 4 -- the blueprint a factory turns into a Monster.
  *
@@ -14,14 +16,18 @@ public class MonsterDef {
     public final int attack;
     public final int xp;
     public final String theme;
-    /** Bosses are excluded from ordinary spawns -- a ThemeKit asks for one by name. */
     public final boolean boss;
+    public final String strategy;
 
     public MonsterDef(String id, String name, int hp, int attack, int xp, String theme) {
-        this(id, name, hp, attack, xp, theme, false);
+        this(id, name, hp, attack, xp, theme, false, "aggressive");
     }
 
     public MonsterDef(String id, String name, int hp, int attack, int xp, String theme, boolean boss) {
+        this(id, name, hp, attack, xp, theme, boss, "aggressive");
+    }
+
+    public MonsterDef(String id, String name, int hp, int attack, int xp, String theme, boolean boss, String strategy) {
         this.id = id;
         this.name = name;
         this.hp = hp;
@@ -29,6 +35,11 @@ public class MonsterDef {
         this.xp = xp;
         this.theme = theme;
         this.boss = boss;
+        this.strategy = strategy;
+    }
+
+    public MonsterDef(String name) {
+        this(name.toLowerCase().replace(" ", "_"), name, 50, 10, 10, "default", false, "aggressive");
     }
 
     public String getId() {
@@ -59,6 +70,9 @@ public class MonsterDef {
         return boss;
     }
 
+    public String getStrategy() {
+        return strategy;
+    }
 
     @Override
     public String toString() {
@@ -66,4 +80,3 @@ public class MonsterDef {
                 + (boss ? " BOSS" : "") + ")";
     }
 }
-
