@@ -81,10 +81,21 @@ public final class Main {
                     } else {
                         for (Monster m : room.getMonsters()) line.append(m.describe()).append("  ");
                     }
-                    if (room.hasChest()) {
+                    if (room.hasChest() && room.getChest() != null) {
                         line.append(" [").append(room.getChest().getName()).append(": ");
-                        for (var item : room.getChest().getContents()) line.append(item.getName()).append(", ");
-                        line.setLength(line.length() - 2);
+                        var contents = room.getChest().getContents();
+                        if (contents != null && !contents.isEmpty()) {
+                            for (var item : contents) {
+                                if (item != null) {
+                                    line.append(item.getName()).append(", ");
+                                }
+                            }
+                            if (line.toString().endsWith(", ")) {
+                                line.setLength(line.length() - 2);
+                            }
+                        } else {
+                            line.append("empty");
+                        }
                         line.append("]");
                     }
                     System.out.println(line.toString().trim());
