@@ -1,5 +1,6 @@
 package dungeonforge.factory;
 
+import dungeonforge.behavior.*;
 import dungeonforge.config.GameConfig;
 import dungeonforge.config.Json;
 import dungeonforge.config.RandomSource;
@@ -32,7 +33,7 @@ public class MonsterFactory {
     private final Map<String, MonsterDef> blueprints = new LinkedHashMap<>();
 
     public MonsterFactory() {
-       loadFrom("monsters.json");
+        loadFrom("monsters.json");
     }
 
     /** Reads blueprints from a classpath resource. Content is data, not code. */
@@ -54,7 +55,8 @@ public class MonsterFactory {
                     num(m.get("attack"), 3),
                     num(m.get("xp"), 5),
                     str(m.get("theme"), "crypt"),
-                    Boolean.TRUE.equals(m.get("boss"))));
+                    Boolean.TRUE.equals(m.get("boss")),
+                    str(m.get("strategy"), "aggressive")));
         }
     }
 
@@ -72,20 +74,22 @@ public class MonsterFactory {
         }
         int scale = Math.max(0, depth - 1);
         RandomSource rng = RandomSource.getInstance();
-        return new Monster(d.getName(),
+        Monster m =  new Monster(d.getName(),
                 Math.max(1, d.getHp() + scale * 4 + rng.between(-2, 2)),
                 Math.max(1, d.getAttack() + scale + rng.between(-1, 1)),
                 d.getXp() + scale * 3);
+        m.setStrategy(strategyFor(d.getStrategy()));
+        return m;
     }
 
     public List<String> idsForTheme(String name) {
-         List<String> out = new ArrayList<>();
-         for(MonsterDef d : blueprints.values()) {
-             if(d.getTheme().equals(name) && !d.isBoss()) {
-                 out.add(d.getId());
-             }
-         }
-         return out;
+        List<String> out = new ArrayList<>();
+        for(MonsterDef d : blueprints.values()) {
+            if(d.getTheme().equals(name) && !d.isBoss()) {
+                out.add(d.getId());
+            }
+        }
+        return out;
     }
 
     /** The boss blueprint for a theme, or null if that theme has none. */
@@ -99,6 +103,14 @@ public class MonsterFactory {
     public boolean has(String id)  { return blueprints.containsKey(id); }
     public int blueprintCount()    { return blueprints.size(); }
 
+    public static CombatStrategy strategyFor(String name) {
+        return switch(name == null ? "" : name.toLowerCase()) {
+            case "ranged" -> new RangedStrategy();
+            case "skittish" -> new SkittishStrategy();
+            case "healer" -> new HealerStrategy();
+            default -> new AggressiveStrategy();
+        };
+    }
     // --- tiny helpers so the JSON reading above stays readable ---
 
     private static String str(Object o, String fallback) {
