@@ -1,4 +1,5 @@
 package dungeonforge;
+
 import dungeonforge.behavior.Action;
 import dungeonforge.behavior.AggressiveStrategy;
 import dungeonforge.behavior.CombatStrategy;
@@ -19,21 +20,27 @@ import dungeonforge.events.QuestTracker;
 import dungeonforge.factory.MonsterFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 /** WEEK 5 -- Sprint 3. Strategy and Observer. */
 class StrategyObserverTest {
+
     @BeforeEach
     void reset() {
         GameConfig.resetForTests();
         RandomSource.resetForTests();
     }
+
     private Monster wounded(int maxHp, int damage) {
         Monster m = new Monster("Test", maxHp, 4, 5);
         m.takeDamage(damage);
         return m;
     }
+
     // ---------- US-3.1: Strategy ----------
     @Test
     void aMonsterHoldsItsBehaviourRatherThanBeingASubclassOfIt() {
@@ -43,27 +50,28 @@ class StrategyObserverTest {
         assertEquals(Monster.class, m.getClass(),
                 "behaviour must not be expressed by subclassing Monster");
     }
+
     @Test
     void aggressiveAlwaysAttacks() {
         Monster m = wounded(20, 0);
-        Action a = new AggressiveStrategy().chooseAction(m, new Player("P"), new
-                Room("r"));
+        Action a = new AggressiveStrategy().chooseAction(m, new Player("P"), new Room("r"));
         assertEquals(Action.Type.ATTACK, a.getType());
     }
+
     @Test
     void skittishFleesOnceBadlyWounded() {
         Monster m = wounded(20, 18); // 10% health, under the 30% flee threshold
-        Action a = new SkittishStrategy().chooseAction(m, new Player("P"), new
-                Room("r"));
+        Action a = new SkittishStrategy().chooseAction(m, new Player("P"), new Room("r"));
         assertEquals(Action.Type.FLEE, a.getType());
     }
+
     @Test
     void skittishStillFightsWhenHealthy() {
         Monster m = wounded(20, 2); // 90% health
-        Action a = new SkittishStrategy().chooseAction(m, new Player("P"), new
-                Room("r"));
+        Action a = new SkittishStrategy().chooseAction(m, new Player("P"), new Room("r"));
         assertEquals(Action.Type.ATTACK, a.getType());
     }
+
     @Test
     void healerMendsTheMostWoundedAlly() {
         Room room = new Room("r");
@@ -71,34 +79,31 @@ class StrategyObserverTest {
         Monster hurt = wounded(20, 15);
         room.addMonster(healer);
         room.addMonster(hurt);
-        Action a = new HealerStrategy().chooseAction(healer, new Player("P"),
-                room);
+        Action a = new HealerStrategy().chooseAction(healer, new Player("P"), room);
         assertEquals(Action.Type.HEAL_ALLY, a.getType());
         assertSame(hurt, a.getTarget());
     }
+
     @Test
     void healerAttacksWhenNobodyNeedsMending() {
         Room room = new Room("r");
         Monster healer = new Monster("Bone Priest", 20, 3, 5);
         room.addMonster(healer);
         assertEquals(Action.Type.ATTACK,
-                new HealerStrategy().chooseAction(healer, new Player("P"),
-                        room).getType());
+                new HealerStrategy().chooseAction(healer, new Player("P"), room).getType());
     }
-    /** The data file decides behaviour, so a designer can retune it without a
-     programmer. */
+
+    /** The data file decides behaviour, so a designer can retune it without a programmer. */
     @Test
     void theFactoryAssignsBehaviourFromTheDataFile() {
         MonsterFactory factory = new MonsterFactory();
-        assertEquals("healer", factory.create("bone_priest",
-                1).getStrategy().name());
+        assertEquals("healer", factory.create("bone_priest", 1).getStrategy().name());
         assertEquals("ranged", factory.create("imp", 1).getStrategy().name());
-        assertEquals("skittish", factory.create("crypt_rat",
-                1).getStrategy().name());
-        assertEquals("aggressive", factory.create("skeleton",
-                1).getStrategy().name());
+        assertEquals("skittish", factory.create("crypt_rat", 1).getStrategy().name());
+        assertEquals("aggressive", factory.create("skeleton", 1).getStrategy().name());
     }
-// ---------- US-3.2: the runtime swap ----------
+
+    // ---------- US-3.2: the runtime swap ----------
     /** THE moment the pattern justifies itself. */
     @Test
     void theSameObjectBehavesDifferentlyAfterASwap() {
@@ -106,12 +111,11 @@ class StrategyObserverTest {
         Player p = new Player("P");
         Room r = new Room("r");
         m.setStrategy(new AggressiveStrategy());
-        assertEquals(Action.Type.ATTACK, m.getStrategy().chooseAction(m, p,
-                r).getType());
+        assertEquals(Action.Type.ATTACK, m.getStrategy().chooseAction(m, p, r).getType());
         m.setStrategy(new SkittishStrategy()); // one line, same object
-        assertEquals(Action.Type.FLEE, m.getStrategy().chooseAction(m, p,
-                r).getType());
+        assertEquals(Action.Type.FLEE, m.getStrategy().chooseAction(m, p, r).getType());
     }
+
     @Test
     void combatSwapsAWoundedMonsterToSkittishAndAnnouncesIt() {
         EventBus bus = new EventBus();
@@ -122,22 +126,22 @@ class StrategyObserverTest {
         m.setStrategy(new AggressiveStrategy());
         room.addMonster(m);
         new Combat(bus).fight(new Player("P"), room, 1);
-        assertTrue(seen.stream().anyMatch(e -> e.getType() ==
-                        EventType.STRATEGY_CHANGED),
+        assertTrue(seen.stream().anyMatch(e -> e.getType() == EventType.STRATEGY_CHANGED),
                 "a monster driven below the flee threshold should change tactics");
     }
+
     // ---------- US-3.3 and US-3.4: Observer ----------
     @Test
     void aSubscriberReceivesWhatIsPublished() {
         EventBus bus = new EventBus();
         List<GameEvent> seen = new ArrayList<>();
         bus.subscribe(seen::add);
-        bus.publish(GameEvent.of(EventType.MONSTER_DIED, "name", "Skeleton", "xp",
-                6));
+        bus.publish(GameEvent.of(EventType.MONSTER_DIED, "name", "Skeleton", "xp", 6));
         assertEquals(1, seen.size());
         assertEquals("Skeleton", seen.get(0).getString("name"));
         assertEquals(6, seen.get(0).getInt("xp"));
     }
+
     @Test
     void everySubscriberSeesEveryEvent() {
         EventBus bus = new EventBus();
@@ -149,6 +153,7 @@ class StrategyObserverTest {
         assertEquals(1, a.size());
         assertEquals(1, b.size());
     }
+
     @Test
     void unsubscribingStopsDelivery() {
         EventBus bus = new EventBus();
@@ -160,8 +165,8 @@ class StrategyObserverTest {
         bus.publish(GameEvent.message("two"));
         assertEquals(1, seen.size());
     }
-    /** A listener that removes itself mid-notification must not blow up the bus.
-     */
+
+    /** A listener that removes itself mid-notification must not blow up the bus. */
     @Test
     void aListenerMayUnsubscribeItselfWhileBeingNotified() {
         EventBus bus = new EventBus();
@@ -171,22 +176,21 @@ class StrategyObserverTest {
         assertDoesNotThrow(() -> bus.publish(GameEvent.message("boom")));
         assertEquals(0, bus.listenersCount());
     }
+
     @Test
     void theQuestTrackerCountsWithoutCombatKnowingItExists() {
         EventBus bus = new EventBus();
         QuestTracker tracker = new QuestTracker(bus);
         bus.subscribe(tracker);
         for (int i = 0; i < 5; i++) {
-            bus.publish(GameEvent.of(EventType.MONSTER_DIED, "name", "Skeleton",
-                    "xp", 6));
+            bus.publish(GameEvent.of(EventType.MONSTER_DIED, "name", "Skeleton", "xp", 6));
         }
         assertTrue(tracker.getQuests().get(0).isComplete());
     }
+
     /**
-     * THE GRADED PROOF of US-3.4: Combat publishes and has no reference to any
-     listener.
-     * If this fails, someone reached into Combat to add a feature that should have
-     subscribed.
+     * THE GRADED PROOF of US-3.4: Combat publishes and has no reference to any listener.
+     * If this fails, someone reached into Combat to add a feature that should have subscribed.
      */
     @Test
     void combatDoesNotDependOnAnyListener() throws Exception {
@@ -198,6 +202,7 @@ class StrategyObserverTest {
         assertFalse(source.contains("System.out"),
                 "Combat must not print -- it publishes, and a view decides what to show");
     }
+
     // ---------- regression ----------
     @Test
     void earlierWeeksStillHold() {
@@ -209,6 +214,7 @@ class StrategyObserverTest {
         int second = factory.create("skeleton", 3).getMaxHp();
         assertEquals(first, second, "Week 3's determinism");
     }
+
     @Test
     void addingAFifthStrategyRequiresNoChangeToMonsterOrCombat() {
         CombatStrategy cowardly = new CombatStrategy() {
@@ -220,7 +226,6 @@ class StrategyObserverTest {
         Monster m = new Monster("Test", 10, 3, 5);
         m.setStrategy(cowardly);
         assertEquals(Action.Type.WAIT,
-                m.getStrategy().chooseAction(m, new Player("P"), new
-                        Room("r")).getType());
+                m.getStrategy().chooseAction(m, new Player("P"), new Room("r")).getType());
     }
 }

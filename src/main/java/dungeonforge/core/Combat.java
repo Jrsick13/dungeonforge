@@ -6,7 +6,6 @@ import dungeonforge.config.GameConfig;
 import dungeonforge.events.EventBus;
 import dungeonforge.events.EventType;
 import dungeonforge.events.GameEvent;
-import jdk.jfr.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,7 +148,6 @@ public class Combat {
     }
 
     /** Between rooms the player catches their breath. Tunable, so it lives in config. */
-    /** Between rooms the player catches their breath. The dead do not catch their breath. */
     public static void restAfterRoom(Player player) {
         if (!player.isAlive()) return;
         player.heal(GameConfig.getInstance().getInt("restHealPerRoom"));
