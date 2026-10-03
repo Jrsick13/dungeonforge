@@ -19,20 +19,16 @@ import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
-
 import java.util.Iterator;
 
 /**
  * WEEK 3 -- the same demo, now reproducible.
- * The --seed flag works because there is exactly one RandomSource to reseed. With three
- * scattered Random objects it could not have been written at all.
+ * The --seed flag works because there is exactly one RandomSource to reseed.
  */
 public final class Main {
-
     public static final String VERSION = "0.5.0";
 
-    private Main() {
-    }
+    private Main() { }
 
     public static String banner() {
         return """
@@ -65,13 +61,10 @@ public final class Main {
                 .dest("seed")
                 .type(Long.class)
                 .setDefault(-1L)
-                .help("The name of the player");
+                .help("The seed for random generation");
 
         try {
-            // Parse the arguments
             Namespace res = parser.parseArgs(args);
-            // Extract the argument values
-
             Long seed = res.getLong("seed");
             if (seed >= 0) {
                 RandomSource.getInstance().reseed(seed);
@@ -110,20 +103,19 @@ public final class Main {
                     }
                 }
             }
+
             System.out.println();
             int monstersAtStart = world.totalMonsters();
             int lootAtStart = world.totalLoot();
 
             System.out.println("=== THE DELVE ===");
 
-            // WEEK 5 -- OBSERVER wiring. This is the ONLY place the listeners are named.
-            // Combat has no idea of them exist.
             EventBus bus = new EventBus();
-            QuestTracker quest = new QuestTracker(bus);
-            AchievementSystem achievement = new AchievementSystem(bus);
+            QuestTracker quests = new QuestTracker(bus);
+            AchievementSystem achievements = new AchievementSystem(bus);
             CombatLog log = new CombatLog(200);
-            bus.subscribe(quest);
-            bus.subscribe(achievement);
+            bus.subscribe(quests);
+            bus.subscribe(achievements);
             bus.subscribe(log);
 
             delve(world, player, bus);
@@ -131,7 +123,7 @@ public final class Main {
             var lines = log.getLines();
 
             System.out.println();
-            System.out.println("-- combat log opening --");
+            System.out.println("-- combat log: opening --");
             Iterator<String> it = lines.iterator();
             int i = 0;
             while (i < 8 && it.hasNext()) {
@@ -139,8 +131,6 @@ public final class Main {
                 i++;
             }
 
-            // The lines that prove the STRATEGY pattern is doing something. Each of these is a
-            // monster behaving differently from another monster, or from its own earlier self.
             System.out.println();
             System.out.println("-- strategy highlights --");
             int shown = 0;
@@ -163,12 +153,12 @@ public final class Main {
 
             System.out.println();
             System.out.println("-- quests --");
-            for (Quest q : quest.getQuests()) System.out.println("  " + q);
+            for (Quest q : quests.getQuests()) System.out.println("  " + q);
 
             System.out.println();
             System.out.println("-- achievements --");
-            if (achievement.getUnlocked().isEmpty()) System.out.println("  (none)");
-            for (String a : achievement.getUnlocked()) System.out.println("  " + a);
+            if (achievements.getUnlocked().isEmpty()) System.out.println("  (none)");
+            for (String a : achievements.getUnlocked()) System.out.println("  " + a);
 
             System.out.println();
             System.out.println("Listeners on the bus: " + bus.listenersCount()
@@ -179,15 +169,13 @@ public final class Main {
             System.out.println("Monster blueprints loaded: " + world.getMonsterFactory().blueprintCount());
             System.out.println("Monsters placed: " + monstersAtStart + "   Loot placed: " + lootAtStart
                     + "  |  still in the dungeon after the delve: " + world.totalMonsters());
+
         } catch (ArgumentParserException e) {
             parser.handleError(e);
             System.exit(1);
         }
     }
 
-    /**
-     * Walks the whole dungeon, fighting whatever is in the way.
-     */
     private static void delve(GameWorld world, Player player, EventBus bus) {
         Combat combat = new Combat(bus);
         for (DungeonLevel level : world.getLevels()) {
