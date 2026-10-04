@@ -33,7 +33,7 @@ public class MonsterFactory {
     private final Map<String, MonsterDef> blueprints = new LinkedHashMap<>();
 
     public MonsterFactory() {
-       loadFrom("monsters.json");
+        loadFrom("monsters.json");
     }
 
     /** Reads blueprints from a classpath resource. Content is data, not code. */
@@ -83,13 +83,13 @@ public class MonsterFactory {
     }
 
     public List<String> idsForTheme(String name) {
-         List<String> out = new ArrayList<>();
-         for(MonsterDef d : blueprints.values()) {
-             if(d.getTheme().equals(name) && !d.isBoss()) {
-                 out.add(d.getId());
-             }
-         }
-         return out;
+        List<String> out = new ArrayList<>();
+        for(MonsterDef d : blueprints.values()) {
+            if(d.getTheme().equals(name) && !d.isBoss()) {
+                out.add(d.getId());
+            }
+        }
+        return out;
     }
 
     /** The boss blueprint for a theme, or null if that theme has none. */

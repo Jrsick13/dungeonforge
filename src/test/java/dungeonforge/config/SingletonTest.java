@@ -1,93 +1,125 @@
 package dungeonforge.config;
 
+import dungeonforge.config.GameConfig;
+import dungeonforge.config.RandomSource;
 import dungeonforge.core.GameWorld;
 import dungeonforge.core.Player;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class SingletonTest {
+/**
+ * WEEK 3 -- US-1.3, "the one-instance rule is enforced, not hoped for."
+ *
+ * Note what these tests assert: SAME REFERENCE, not equal objects. For a Singleton those are
+ * different claims and only the stronger one proves the constraint holds.
+ */
+class SingletonTest {
 
     @BeforeEach
-    public void setUp() {
-        RandomSource.resetForTests();
+    void freshSingletons() {
+        // Because singletons are global state, one test can leak into the next. This is the
+        // cost of the pattern, and these two lines are the price we pay for it every time.
         GameConfig.resetForTests();
-    }
-
-    @Test
-    public void testSameInstanceReturned() {
-        RandomSource r1 = RandomSource.getInstance();
-        RandomSource r2 = RandomSource.getInstance();
-        assertSame(r1, r2, "RandomSource.getInstance() must return the exact same instance reference.");
-
-        GameConfig c1 = GameConfig.getInstance();
-        GameConfig c2 = GameConfig.getInstance();
-        assertSame(c1, c2, "GameConfig.getInstance() must return the exact same instance reference.");
-    }
-
-    @Test
-    public void testConstructorsArePrivate() {
-        Constructor<?>[] randomSourceConstructors = RandomSource.class.getDeclaredConstructors();
-        for (Constructor<?> constructor : randomSourceConstructors) {
-            assertTrue(Modifier.isPrivate(constructor.getModifiers()),
-                    "RandomSource constructor must be private.");
-        }
-
-        Constructor<?>[] gameConfigConstructors = GameConfig.class.getDeclaredConstructors();
-        for (Constructor<?> constructor : gameConfigConstructors) {
-            assertTrue(Modifier.isPrivate(constructor.getModifiers()),
-                    "GameConfig constructor must be private.");
-        }
-    }
-
-    @Test
-    public void testSameSeedProducesIdenticalSequence() {
-        RandomSource.getInstance().reseed(42L);
-        int val1 = RandomSource.getInstance().nextInt(100);
-        int val2 = RandomSource.getInstance().nextInt(100);
-
         RandomSource.resetForTests();
-        RandomSource.getInstance().reseed(42L);
-        int val3 = RandomSource.getInstance().nextInt(100);
-        int val4 = RandomSource.getInstance().nextInt(100);
+    }
 
-        assertEquals(val1, val3, "Same seed must yield identical first random output.");
-        assertEquals(val2, val4, "Same seed must yield identical second random output.");
+    // ---------- US-1.1 ----------
+
+    @Test
+    void configReturnsTheSameInstanceEveryTime() {
+        assertSame(GameConfig.getInstance(), GameConfig.getInstance());
     }
 
     @Test
-    public void testDifferentSeedProducesDifferentSequence() {
-        RandomSource.getInstance().reseed(42L);
-        int val1 = RandomSource.getInstance().nextInt(1000000);
-
-        RandomSource.resetForTests();
-        RandomSource.getInstance().reseed(99L);
-        int val2 = RandomSource.getInstance().nextInt(1000000);
-
-        assertNotEquals(val1, val2, "Different seeds must produce different random values.");
+    void configConstructorIsPrivate() {
+        Constructor<?>[] ctors = GameConfig.class.getDeclaredConstructors();
+        assertEquals(1, ctors.length, "a singleton should expose exactly one constructor");
+        assertTrue(Modifier.isPrivate(ctors[0].getModifiers()),
+                "the constructor must be private, or `new GameConfig()` would compile");
     }
 
     @Test
-    public void testSameSeedProducesSameDungeon() {
-        RandomSource.getInstance().reseed(42L);
-        GameWorld world1 = new GameWorld(new Player("Delver"));
-        int monsters1 = world1.totalMonsters();
+    void configReadsValuesFromTheConfigFile() {
+        assertEquals(80, GameConfig.getInstance().getInt("playerStartingHp"));
+    }
 
-        RandomSource.resetForTests();
-        GameConfig.resetForTests();
+    @Test
+    void aPlayerIsBuiltFromConfiguredValues() {
+        Player p = new Player("Tester");
+        assertEquals(GameConfig.getInstance().getInt("playerStartingHp"), p.getMaxHp());
+        assertEquals(GameConfig.getInstance().getInt("playerStartingAttack"), p.getAttackPower());
+    }
 
-        RandomSource.getInstance().reseed(42L);
-        GameWorld world2 = new GameWorld(new Player("Delver"));
-        int monsters2 = world2.totalMonsters();
+    @Test
+    void unknownKeysDoNotCrashTheGame() {
+        assertEquals(0, GameConfig.getInstance().getInt("noSuchSetting"));
+    }
 
-        assertEquals(monsters1, monsters2, "Same seed must produce the same total monster count in the dungeon.");
+    // ---------- US-1.2 ----------
+
+    @Test
+    void randomSourceReturnsTheSameInstanceEveryTime() {
+        assertSame(RandomSource.getInstance(), RandomSource.getInstance());
+    }
+
+    @Test
+    void randomSourceConstructorIsPrivate() {
+        Constructor<?>[] ctors = RandomSource.class.getDeclaredConstructors();
+        assertEquals(1, ctors.length, "a singleton should expose exactly one constructor.");
+        assertTrue(Modifier.isPrivate(ctors[0].getModifiers()));
+    }
+
+    /** AC1: the same seed produces the same sequence. */
+    @Test
+    void theSameSeedProducesTheSameSequence() {
+        RandomSource.getInstance().reseed(12345L);
+        int[] first = tenRolls();
+
+        RandomSource.getInstance().reseed(12345L);
+        int[] second = tenRolls();
+
+        assertArrayEquals(first, second);
+    }
+
+    /**
+     * AC4, and the criterion that matters most.
+     *
+     * Without this test, an implementation that ignores the seed entirely would still pass
+     * the test above. The pair pins the behaviour down from both sides.
+     */
+    @Test
+    void aDifferentSeedProducesADifferentSequence() {
+        RandomSource.getInstance().reseed(1L);
+        int[] first = tenRolls();
+
+        RandomSource.getInstance().reseed(2L);
+        int[] second = tenRolls();
+
+        assertFalse(java.util.Arrays.equals(first, second),
+                "a different seed should produce a different sequence");
+    }
+
+    /** The whole point, stated at the level a player would recognise. */
+    @Test
+    void theSameSeedProducesTheSameDungeon() {
+        RandomSource.getInstance().reseed(999L);
+        int monstersFirstRun = new GameWorld(new Player("A")).totalMonsters();
+
+        RandomSource.getInstance().reseed(999L);
+        int monstersSecondRun = new GameWorld(new Player("B")).totalMonsters();
+
+        assertEquals(monstersFirstRun, monstersSecondRun);
+    }
+
+    private int[] tenRolls() {
+        int[] out = new int[10];
+        for (int i = 0; i < out.length; i++) out[i] = RandomSource.getInstance().nextInt(1000);
+        return out;
     }
 }
+
