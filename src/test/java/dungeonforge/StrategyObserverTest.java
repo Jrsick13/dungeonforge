@@ -21,6 +21,8 @@ import dungeonforge.factory.MonsterFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -194,8 +196,14 @@ class StrategyObserverTest {
      */
     @Test
     void combatDoesNotDependOnAnyListener() throws Exception {
-        String source = new String(java.nio.file.Files.readAllBytes(
-                java.nio.file.Path.of("src/main/java/dungeonforge/core/Combat.java")));
+        Path path = Path.of("src/main/java/dungeonforge/core/Combat.java");
+        if (!Files.exists(path)) {
+            path = Path.of("core/Combat.java");
+        }
+        if (!Files.exists(path)) {
+            path = Path.of("../src/main/java/dungeonforge/core/Combat.java");
+        }
+        String source = new String(Files.readAllBytes(path));
         assertFalse(source.contains("QuestTracker"));
         assertFalse(source.contains("AchievementSystem"));
         assertFalse(source.contains("CombatLog"));

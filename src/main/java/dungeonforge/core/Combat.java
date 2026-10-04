@@ -65,7 +65,7 @@ public class Combat {
     private void playerActs(Player player, Room room) {
         // --- player's turn: hit the first thing still standing ---
         Monster target = firstLiving(room);
-        if ( target == null) return;
+        if (target == null) return;
 
         int damage = player.getAttackPower();
         target.takeDamage(damage);
@@ -93,6 +93,7 @@ public class Combat {
         bus.publish(GameEvent.of(EventType.STRATEGY_CHANGED,
                 "name", m.getName(), "from", from, "to", m.getStrategy().name()));
     }
+
     /**
      * TODO(week 5, US-3.1 and US-3.2): THIS METHOD IS THE WHOLE PROBLEM.
      *
@@ -104,7 +105,7 @@ public class Combat {
     private void monsterActs(Monster m, Player player, Room room) {
         if(m.getStrategy() == null) return;
         Action action = m.getStrategy().chooseAction(m, player, room);
-        if( action == null ) return;
+        if(action == null) return;
 
         switch (action.getType()) {
             case ATTACK -> {
