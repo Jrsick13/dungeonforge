@@ -68,16 +68,16 @@ Noticing that is worth more than finishing everything.
 ## Calibration
 
 | Story | Estimated | Actual hours | High, low, about right? |
-|---|---|---|---|
-| US-3.1 | 3 | | |
-| US-3.2 | 2 | | |
-| US-3.3 | 3 | | |
-| US-3.4 | 2 | | |
+|---|---|--------------|---|
+| US-3.1 | 3 | 2.5          |About right |
+| US-3.2 | 2 | 1.0          |About right |
+| US-3.3 | 3 | 2.0          |About right |
+| US-3.4 | 2 | 1.5          |About right |
 
-**Points completed:** ____ · **Running velocity (sprints 0–3):** ____
+**Points completed:** _10_ · **Running velocity (sprints 0–3):** _8.3_
 
 > **This number is your Week 6 budget.** You'll set your own capacity from it.
 
 ## Sprint Review — one sentence
-
+By decoupling encounter logic from auxiliary systems using the Observer pattern and swapping monster behavior dynamically via composition, we successfully extended the game's features without ever touching core combat code.
 
