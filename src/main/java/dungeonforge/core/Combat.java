@@ -11,7 +11,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * WEEK 5 -- a minimal encounter resolver. New this week so that monsters have something to DO.
+ * WEEK 5 -- a minimal encounter resolver. New this week so that monsters have something to
+ * DO. Week 7 turns player actions into Command objects and Week 10 replaces this loop with a
+ * Template Method, so do not polish it -- it is scaffolding.
+
+ * TODO(week 5, US-3.1): look at monsterActs(). Every monster in the game fights the same way,
+ * because "how a monster fights" is an if/else chain living inside this class. A Skeleton and
+ * an Imp are indistinguishable in a fight.
+
+ * The obvious fix is to subclass Monster -- AggressiveMonster, RangedMonster, SkittishMonster.
+ * Before you do that, count: we have 15 species and we want 4 behaviours. Do the arithmetic
+ * in docs/strategy-observer-clinic.md Part D1 BEFORE you write any code.
+
+ * TODO(week 5, US-3.3): look at everything this class prints, and at the xp/gold bookkeeping.
+ * Combat knows about the console. If we want quests, achievements or a scrolling log, they
+ * all have to be bolted into this class, and it grows forever.
  */
 public class Combat {
 
